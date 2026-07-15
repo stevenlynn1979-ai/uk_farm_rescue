@@ -1,44 +1,44 @@
-# TravelTide: Causal Inference & Customer Retention Optimization
+# 🐾 UK Farm Rescue Operations: End-to-End Data Analytics Portfolio
 
-> To tackle TravelTide's declining customer retention, this project bypasses costly blanket discounts by using rigorous causal inference modeling in Python. By mapping customer friction points, I designed a personalized perk allocation strategy that targets incentives to the right users, maximizing loyalty and incremental retention lift.
+> To optimize resource allocation and improve animal welfare outcomes, this project cleans and analyzes emergency farm rescue data across the United Kingdom. By resolving data inconsistencies in Google Sheets and conducting deep-dive relational SQL querying in Beekeeper Studio, I built an operational framework to pinpoint high-risk rescue profiles, cost anomalies, and geographic demand hubs.
 
 ---
 
 ## 📌 Business Case & Objectives
-TravelTide, an online travel platform, was experiencing a critical drop in customer retention. Traditional marketing strategies relied on blanket promotional discounts—a highly expensive approach that often subsidized bookings for users who would have booked anyway (selection bias). 
+Emergency livestock rescue services across the UK operate under tight budgets and unpredictable demand. Traditional rescue management lacks central analysis, leading to high-cost outliers and lower animal survival rates due to suboptimal emergency routing and resource preparation.
 
 This project aims to:
-*   **Identify the true causal impact** of five key perks on long-term user loyalty.
-*   **Build an optimization framework** to route the right perk to the right user segment.
-*   **Maximize retention lift** while preserving promotional margins.
+* **Standardize and clean raw operational records** to build a single, reliable version of truth.
+* **Identify critical high-risk animal segments** and isolate systemic veterinary pain points.
+* **Uncover cost deviations across regions** to guide targeted budget allocation and strategic depot placement.
 
 ---
 
-## ⚙️ Methodology & Causal Framework
-Rather than looking at simple correlations, this analysis uses causal concepts to isolate the incremental effect of TravelTide’s incentive programs:
+## ⚙️ Methodology & Analytical Framework
+To turn raw data into structured business intelligence, the project was executed in two distinct, sequential phases:
 
-1.  **Friction Point Mapping:** Audited extensive, high-velocity session and user journey datasets in Python to locate where users dropped off in the booking funnel.
-2.  **Targeted Segments vs. Blanket Discounts:** Discovered that blanket discounts yielded low incremental lift. Instead, users were segmented by booking habits (e.g., flight-to-hotel ratios, travel frequency).
-3.  **Perk Optimization Routing:** Evaluated and mapped five core perks to specific behavioral profiles:
-    *   *Free Checked Bags* (High flight-only flyers)
-    *   *Free Hotel Meals* (Hotel-heavy travelers)
-    *   *Cancellation Fee Waivers* (Frequent business travelers)
-    *   *Flight-Hotel Bundles* (Leisure/family travelers)
-    *   *Flexible Credit Rollovers* (High-frequency, fluctuating schedule travelers)
+1.  **Data Cleaning & Standardization (Google Sheets):**
+    * *Categorical Merging:* Grouped inconsistent animal classes by merging rare and `"unknown"` classifications into a standardized `"Other"` category.
+    * *Boolean Normalization:* Converted chaotic boolean fields (`True`, `False`, `1`, `0`, and capitalization anomalies) into strict database-compliant formats for `vet_healthy` and `veg_vaccinated` (veterinary vaccination).
+    * *Numerical Sanitization:* Aligned the data types for `animal_count`, `animals_survived`, and `estimated_cost` to proper numeric formats by stripping trailing spaces and adjusting float precision.
+2.  **Relational SQL Analysis (Beekeeper Studio):**
+    * *Performance Aggregations:* Evaluated unit-level costs and survival metrics across species to isolate low-performance segments.
+    * *Window Functions for Outlier Detection:* Built partitioning queries to calculate regional cost baselines and identify rescue deployments with high cost deviations.
+    * *Root Cause Categorization:* Aggregated the financial impact of underlying incident causes to determine which systemic drivers generate the highest average emergency response expenses.
 
 ---
 
 ## 🛠️ Tech Stack & Tools
-*   **Language:** Python
-*   **Data Manipulation:** Pandas, NumPy (handling session-level aggregations and cleaning)
-*   **Data Visualization:** Matplotlib, Seaborn (exploratory data analysis)
-*   **Database Querying:** SQL (extracting historical session and transactional data)
+* **Data Preparation:** Google Sheets (data auditing, text parsing, categorical mapping, and data sanitization)
+* **Database Management:** Beekeeper Studio (Community Edition)
+* **Language:** SQL (SQLite/PostgreSQL compatible dialect)
 
 ---
 
 ## 📂 Project Structure
 ```text
-├── data/                  # Sample behavioral cohort data (anonymized)
-├── notebooks/             # Python notebooks covering EDA, segmentation, & causal modeling
-├── reports/               # Executive presentation deck with final recommendations
-└── README.md              # Project documentation
+├── data/                  # Contains raw and final cleaned versions of the dataset
+├── sql_queries/           # Structured SQL scripts covering species performance, cost outliers, and regional deviation
+├── reports/               # Executive Word (.docx) document highlighting key business insights
+└── README.md              # Project documentation and portfolio overview
+
