@@ -1,0 +1,133 @@
+/*Cleaned the two types of species (Other and unknown) into a single category*/
+
+update rescue_data
+set species = 'Other'
+  where Lower(species) = 'unknown';
+
+/*Overall Survival Rate by Species*/
+select 
+  species
+, sum(animal_count) as total_rescued
+, sum(animals_survived) as total_survived
+, round(sum(animals_survived) * 100 / sum(animal_count), 2) as survival_rate_ptc
+from rescue_data
+group by species
+order by survival_rate_ptc desc;
+
+/*Most Costly Rescue Regions*/
+
+select 
+  rescue_region
+, count(rescue_id) as total_rescues
+, round(avg(estimated_cost), 2) as avg_cost
+, round(sum(estimated_cost), 2) as total_cost
+from rescue_data
+group by rescue_region
+order by total_cost desc;
+
+
+/* Top 5 Most Common Incident Causes*/
+
+select 
+  incident_cause
+, count(*) as incident_count
+, round(count(*) * 100 / (select count(*) from rescue_data), 2) as pct_of_total_incidents
+from rescue_data
+group by incident_cause
+order by incident_count desc
+limit 5;
+
+
+/*Organization Workload and Success Metrics*/
+
+select 
+  organisation_name
+, count(rescue_id) as rescue_events_handled
+, sum(animal_count) as total_animals_handled
+, round(sum(animals_survived) * 100 / sum(animal_count), 2) as success_rate_pct
+from rescue_data
+group by organisation_name
+order by total_animals_handled desc;
+
+
+/*(YoY) Rescue Trends*/
+
+select 
+  strftime('%Y', rescue_date) as rescue_year
+, count(*) as annual_rescues
+, sum(animal_count) as total_animals
+, round(sum(estimated_cost), 2) as total_annual_cost
+from rescue_data
+group by rescue_year
+order by rescue_year;
+
+
+/*Vaccination Rates Amoung Unhealthy Animals*/
+
+select
+  species
+, count(*) as total_unhealthly_cases
+, sum(case when veg_vaccinated = '1' then 1 else 0 end) as vaccinated_count
+, round(sum(case when veg_vaccinated = '1' then 1 else 0 end) * 100 / count(*), 2) as vaccination_rate_unhealthy_pct
+from rescue_data
+where vet_healthy = '0'
+group by species
+order by vaccination_rate_unhealthy_pct desc; 
+
+
+/*Cost-per-Animal Efficiency Analysis*/
+
+select 
+  species
+, sum(animal_count) as total_animals
+, round(sum(estimated_cost), 2) as total_spend
+, round(sum(estimated_cost) / sum(animal_count), 2) as cost_per_individual_animal
+from rescue_data
+group by species
+order by cost_per_individual_animal desc;
+
+
+/*High Risk Rescues*/
+
+select 
+  rescue_region
+, species
+, count(rescue_id) as total_incidents
+, sum(animal_count) as total_animals
+, round(sum(animals_survived) * 100 / sum(animal_count), 2) as survival_rate_pct
+from rescue_data
+group by rescue_region, species 
+having sum(animal_count) > 10 and (sum(animals_survived) * 100 / sum(animal_count)) < 75.0
+order by survival_rate_pct;
+
+
+/*Severity of Vet Conditions*/
+
+select  
+    case 
+        when vet_conditions like '%emaciation%' or vet_conditions like '%malnutrition%' then 'Malnutrition/Emaciation'
+        when vet_conditions like '%respiratory%' then 'Respiratory issues'
+        when vet_conditions like '%parasite%' or vet_conditions like '%lice%' then 'Parasite Burden'
+        when vet_conditions = 'none' then 'No Conditions Reported'
+        else 'Other Veterinary Conditions'
+    end as condition_category
+,   count(*) as incident_count
+,   round(avg(estimated_cost), 2) as avg_treatment_cost
+from rescue_data
+group by condition_category
+order by incident_count DESC;
+
+
+/*Cost Deviation from Regional Average*/
+
+select 
+    rescue_id
+,   rescue_region
+,   species
+,   estimated_cost
+,   round(avg(estimated_cost) over(partition by rescue_region), 2) as regional_avg_cost
+,   round(estimated_cost - avg(estimated_cost) over(partition by rescue_region), 2) as cost_deviation
+from rescue_data
+group by rescue_id, rescue_region, species, estimated_cost
+order by cost_deviation desc
+limit 10;
